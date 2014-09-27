@@ -54,6 +54,8 @@ function display() {
 
 function submitComment(form) {
 	var payload = new FormData(form);
+	payload.append("url", document.URL);
+
 	var request = new XMLHttpRequest();
 	request.open("POST","comments.php", true);
 	request.send(payload);
