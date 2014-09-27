@@ -41,32 +41,46 @@
 	Checks the validity of a comment and adds valid comments to the database.
 
 	TOD0:
-		- Check if values are correct
-			- Name -> alphanumeric + a few symbols
-			- Email -> valid email
-		- Sanatize form input
 	*/
 	function addComment($hidemail) {
 
-		// Determine if any values are missing
-		$missing = [];
-		if ($_POST['name'] == '') {
-			array_push($missing, 'name');
+		// Determine if the values from the POST request are valid, if they 
+		// aren't, add an informative error to the $errors array.  If they are,
+		// sanatize them.
+		$errors = [];
+		if ($_POST["name"] == "") {
+			array_push($errors, "'Name' field is empty.");
 		}
-		if ($_POST['email'] == '') {
-			array_push($missing, 'email');
+		else {
+			$_POST["name"] = 
+			filter_input(INPUT_POST,"name", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		}
-		if ($_POST['message'] == '') {
-			array_push($missing, 'message');
+		if ($_POST["email"] == "") {
+			array_push($errors, "'Email' field is empty.");
+		}
+		elseif (!($_POST["email"] = filter_input(INPUT_POST,"email",
+				FILTER_VALIDATE_EMAIL))) {
+			$msg = "'Email' field does not contain a valid email address.";
+			array_push($errors, $msg);
+		}
+		else {
+			$_POST["email"] = strtolower($_POST["email"]);
+		}
+		if ($_POST["message"] == "") {
+			array_push($errors, "'Comment' field is empty.");
+		}
+		else {
+			$_POST["message"] = 
+			filter_input(INPUT_POST,"message", 
+			FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		}
 
-		// If anything is missing, inform the user.
-		if ($missing) {
-			$message =	"Comment not submitted. Missing: " . 
-						implode(", ", $missing) . "<br>";
-			echo $message;
+		// If anything is invalid, inform the user.
+		if ($errors) {
+			echo "Comment not submitted due to the following errors:<br>- " .
+				implode("<br> - ", $errors) . "<br><br>";
 		}
-		// If nothing is missing, build an SQL query and attempt to submit
+		// If nothing is invalid, build an SQL query and attempt to submit
 		else {
 			$db = initDB();
 			// The table name is the md5 hash of the current URL.
