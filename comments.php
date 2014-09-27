@@ -56,7 +56,7 @@
 	*/
 	function displayComments() {}
 
-
-	initTable("test");  // for testing; remove me later
+	// dumps the array $_POST
+	var_dump($_POST);
 
 ?>

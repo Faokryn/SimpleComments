@@ -34,8 +34,9 @@ function display() {
 
 		var submitButton = document.createElement("input");
 		submitButton.setAttribute("id", "sc_submit_comment");
-		submitButton.setAttribute("type", "submit");
+		submitButton.setAttribute("type", "button");
 		submitButton.setAttribute("value", "Add Comment");
+		submitButton.setAttribute("onClick", "submitComment(this.form)");
 
 		form.innerHTML = "Name: ";
 		form.appendChild(nameField);
@@ -51,6 +52,16 @@ function display() {
 	parent.appendChild(form);
 }
 
+function submitComment(form) {
+	var payload = new FormData(form);
+	var request = new XMLHttpRequest();
+	request.open("POST","comments.php", true);
+	request.send(payload);
+	request.onload = function(e) {
+		document.getElementById("simple_comments").innerHTML
+		+= request.responseText;
+	}
+}
 
 // Wait until the page has finished loading, then run the functions
 window.addEventListener("DOMContentLoaded", function(f) {
