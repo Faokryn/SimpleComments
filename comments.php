@@ -163,7 +163,7 @@
 			}
 
 			$output = $output . "<p class='sc_comment_message'>" . 
-			$row["message"] . "</p></div>";
+			$row["message"] . "</p></div></div>";
 
 			echo $output;
 		}
