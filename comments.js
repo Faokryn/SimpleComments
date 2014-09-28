@@ -2,6 +2,8 @@
 $path = document.getElementById("sc_script").getAttribute("src").slice(0, -11);
 
 function display() {
+	// To completely remove the standard CSS, comment or delete the line below
+	basicStyle();
 
 	// Get the sc_main div, and store it as parent
 	var parent = document.getElementById("sc_main");
@@ -71,6 +73,15 @@ function display() {
 
 	// Add the comments div to the sc_main div
 	parent.appendChild(commentsDiv);
+}
+
+function basicStyle() {
+	var style = document.createElement("style");
+	style.innerHTML = ".sc_comment{position:relative;} .sc_comment_body{" +
+	"display:inline-block;margin-left:90px;} .sc_date{padding:0;margin:0;}" +
+	".sc_name{padding:0;margin:0;} .sc_avatar{position:absolute;top:50%;" +
+	"margin-top:-40px;}"
+	document.head.insertBefore(style, document.head.firstChild);
 }
 
 function submitComment(form) {

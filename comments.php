@@ -147,7 +147,8 @@
 			$output = "<hr class='sc_line'><div class='sc_comment'>"
 
 			. "<img src='http://cdn.libravatar.org/avatar/" . md5($row["email"])
-			. "?d=http://www.gravatar.com/avatar/" . md5($row["email"]) . "' >"
+			. "?d=http://www.gravatar.com/avatar/" . md5($row["email"]) . 
+			"' class='sc_avatar'>"
 
 			. "<div class='sc_comment_body'>" . "<h6 class='sc_date'>" . 
 			$row["date"] . "</h6>";
