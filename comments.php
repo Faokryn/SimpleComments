@@ -30,8 +30,8 @@
 	*/
 	function initTable($name) {
 		$db = initDB();
-		$query = "CREATE TABLE IF NOT EXISTS " . $name . 
-		" (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL," .
+		$query = "CREATE TABLE IF NOT EXISTS '" . $name . 
+		"' (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL," .
 		" message TEXT NOT NULL, hide INTEGER CHECK(hide=0 || hide=1)," .
 		" date TEXT DEFAULT current_timestamp)";
 		$db->exec($query);
@@ -75,39 +75,54 @@
 			FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		}
 
+		$_POST["url"] = filter_input(INPUT_POST,"url", FILTER_SANITIZE_URL);
+
 		// If anything is invalid, inform the user.
 		if ($errors) {
-			echo "Comment not submitted due to the following errors:<br>- " .
-				implode("<br> - ", $errors) . "<br><br>";
+			$msg = "Comment not submitted due to the following errors:\n\t• " .
+				implode("\n\t• ", $errors) . "\n";
+			$response = [
+				"valid" => false,
+				"msg" => $msg
+			];
+			echo json_encode($response);
 		}
 		// If nothing is invalid, build an SQL query and attempt to submit
 		else {
 			$db = initDB();
 			// The table name is the md5 hash of the current URL.
 			$tableName = md5($_POST["url"]);
+			initTable($tableName);
 
 			// Build the query
-			$query = 	"INSERT INTO " . $tableName . 
-						"(name, email, message, hide) " . "VALUES('" . 
-						$_POST["name"] . "', '" . $_POST["email"] . "', '" .
-				 		$_POST["message"] . "', ";
+			$query = "INSERT INTO " . $tableName . 
+					" (name, email, message, hide) VALUES ('" . $_POST["name"] . 
+					"', '" . $_POST["email"] . "', '" . $_POST["message"];
+
 			if ($hidemail) {
-				$query = $query . "1";
+				$query = $query . "', 1)";
 			}
 			else {
-				$query = $query . "0";
+				$query = $query . "', 0)";
 			}
-			$query	= $query . ")";
-
-			initTable($tableName);
 
 			// If the query executes, inform the user
 			if ($db->exec($query)) {
-				echo "<h3>Your comment was submitted successfully!</h3>";
+				$msg = "<h3>Your comment was submitted successfully!</h3>";
+				$response = [
+					"valid" => true,
+					"msg" => $msg
+				];
+				echo json_encode($response);
 			}
 			// If it does not execute, inform the user
 			else {
-				echo "<h3>Error sending SQL query.</h3>";
+				$msg = "<h3>Error sending SQL query.</h3>";
+				$response = [
+					"valid" => false,
+					"msg" => $msg
+				];
+				echo json_encode($response);
 			}
 		}
 	}
@@ -119,7 +134,19 @@
 	TODO:
 		- Everything; this is a stub
 	*/
-	function displayComments() {}
+	function displayComments() {
+		$tableName = md5($_POST["url"]);
+		initTable($tableName);
+
+		$db = initDB();
+
+		$query = "SELECT * FROM " . $tableName;
+		$result = $db->query($query);
+
+		while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+			var_dump($row);
+		}
+	}
 
 
 	/*
@@ -145,14 +172,13 @@
 				addComment(false);
 			}
 		} 
-		elseif (true /*CHECK IF THIS IS A DISPLAY COMMENTS REQUEST*/) {
-			
+		elseif (array_key_exists("displayCall", $_POST)) {
+			displayComments();
 		}
 		else {
-			echo "Something went wrong!";
+			echo "<h1>Something went wrong!</h1>";
 		}
 	}
 
 	handleRequest();
-
 ?>

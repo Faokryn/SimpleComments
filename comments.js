@@ -50,6 +50,24 @@ function display() {
 
 	// Add the comment submission form to the simple_comments div
 	parent.appendChild(form);
+
+		// Populate the comments
+		var commentsDiv = document.createElement("div");
+		commentsDiv.setAttribute("id", "sc_comments");
+
+		var payload = new FormData();
+		payload.append("displayCall", true);
+		payload.append("url", document.URL);
+
+		var request = new XMLHttpRequest();
+		request.open("POST","comments.php", true);
+		request.send(payload);
+		request.onload = function(e) {
+			console.log(request.responseText);
+		}
+
+	// Add the comments div to the simple_comments div
+	parent.appendChild(commentsDiv);
 }
 
 function submitComment(form) {
@@ -60,8 +78,15 @@ function submitComment(form) {
 	request.open("POST","comments.php", true);
 	request.send(payload);
 	request.onload = function(e) {
-		document.getElementById("simple_comments").innerHTML
-		+= request.responseText;
+		console.log(request.responseText);
+		var response = JSON.parse(request.responseText);
+
+		if (response.valid) {
+			document.getElementById("simple_comments").innerHTML = response.msg;
+		}
+		else {
+			window.alert(response.msg);
+		}
 	}
 }
 
