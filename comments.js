@@ -1,3 +1,6 @@
+// Gets the path to the directory in which the Javascript file is located
+$path = document.getElementById("sc_script").getAttribute("src").slice(0, -11);
+
 function display() {
 
 	// Get the simple_comments div, and store it as parent
@@ -60,7 +63,7 @@ function display() {
 		payload.append("url", document.URL);
 
 		var request = new XMLHttpRequest();
-		request.open("POST","comments.php", true);
+		request.open("POST", $path+"comments.php", true);
 		request.send(payload);
 		request.onload = function(e) {
 			commentsDiv.innerHTML += request.responseText;
@@ -75,7 +78,7 @@ function submitComment(form) {
 	payload.append("url", document.URL);
 
 	var request = new XMLHttpRequest();
-	request.open("POST","comments.php", true);
+	request.open("POST", $path+"comments.php", true);
 	request.send(payload);
 	request.onload = function(e) {
 		console.log(request.responseText);
