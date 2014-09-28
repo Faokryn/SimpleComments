@@ -1,9 +1,10 @@
+// To completely remove the standard CSS, comment or delete the line below
+basicStyle();
+
 // Gets the path to the directory in which the Javascript file is located
 $path = document.getElementById("sc_script").getAttribute("src").slice(0, -11);
 
 function display() {
-	// To completely remove the standard CSS, comment or delete the line below
-	basicStyle();
 
 	// Get the sc_main div, and store it as parent
 	var parent = document.getElementById("sc_main");

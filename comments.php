@@ -95,9 +95,10 @@
 			initTable($tableName);
 
 			// Build the query
-			$query = "INSERT INTO " . $tableName . 
-					" (name, email, message, hide) VALUES ('" . $_POST["name"] . 
-					"', '" . $_POST["email"] . "', '" . $_POST["message"];
+			$query = "INSERT INTO '" . $tableName . 
+					"' (name, email, message, hide) VALUES ('" . 
+					$_POST["name"] . "', '" . $_POST["email"] . 
+					"', '" . $_POST["message"];
 
 			if ($hidemail) {
 				$query = $query . "', 1)";
@@ -140,7 +141,7 @@
 
 		$db = initDB();
 
-		$query = "SELECT * FROM " . $tableName;
+		$query = "SELECT * FROM '" . $tableName . "'";
 		$result = $db->query($query);
 
 		while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
