@@ -144,7 +144,27 @@
 		$result = $db->query($query);
 
 		while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-			var_dump($row);
+			$output = "<div class='sc_comment'>";
+
+			// TODO - IMPLEMENT GRAVATAR / LIBRAVATAR HERE
+
+			$output = $output . "<div class='sc_comment_body'>" .
+			"<h6 class='sc_date'>" . $row["date"] . "</h6>";
+
+			if ($row["hide"] == 0) {
+				$output = $output . "<a class='sc_email_link' href='mailto:" . 
+				$row["email"] . "'><h4 class='sc_name'>". $row["name"] . 
+				"</h4></a>";
+			}
+			else {
+				$output = $output . "<h4 class='sc_name'>". $row["name"] . 
+				"</h4>";
+			}
+
+			$output = $output . "<p class='sc_comment_message'>" . 
+			$row["message"] . "</p></div>";
+
+			echo $output;
 		}
 	}
 

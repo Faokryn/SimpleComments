@@ -63,7 +63,7 @@ function display() {
 		request.open("POST","comments.php", true);
 		request.send(payload);
 		request.onload = function(e) {
-			console.log(request.responseText);
+			commentsDiv.innerHTML += request.responseText;
 		}
 
 	// Add the comments div to the simple_comments div
@@ -82,7 +82,7 @@ function submitComment(form) {
 		var response = JSON.parse(request.responseText);
 
 		if (response.valid) {
-			document.getElementById("simple_comments").innerHTML = response.msg;
+			document.getElementById("sc_comment_form").innerHTML = response.msg;
 		}
 		else {
 			window.alert(response.msg);
