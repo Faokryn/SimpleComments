@@ -3,8 +3,8 @@ $path = document.getElementById("sc_script").getAttribute("src").slice(0, -11);
 
 function display() {
 
-	// Get the simple_comments div, and store it as parent
-	var parent = document.getElementById("simple_comments");
+	// Get the sc_main div, and store it as parent
+	var parent = document.getElementById("sc_main");
 
 		// Create the comment submission form
 		var form = document.createElement("form");
@@ -51,7 +51,7 @@ function display() {
 		form.innerHTML += "<br>";
 		form.appendChild(submitButton);
 
-	// Add the comment submission form to the simple_comments div
+	// Add the comment submission form to the sc_main div
 	parent.appendChild(form);
 
 		// Populate the comments
@@ -69,7 +69,7 @@ function display() {
 			commentsDiv.innerHTML += request.responseText;
 		}
 
-	// Add the comments div to the simple_comments div
+	// Add the comments div to the sc_main div
 	parent.appendChild(commentsDiv);
 }
 

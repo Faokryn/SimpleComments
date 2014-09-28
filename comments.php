@@ -144,7 +144,7 @@
 		$result = $db->query($query);
 
 		while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-			$output = "<div class='sc_comment'>";
+			$output = "<hr class='sc_line'><div class='sc_comment'>";
 
 			// TODO - IMPLEMENT GRAVATAR / LIBRAVATAR HERE
 
