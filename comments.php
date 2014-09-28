@@ -1,4 +1,17 @@
 <?php
+/*
+	SIMPLE COMMENTS
+	A commenting system designed to be fast and easy to implement.
+
+	Created by Colin O'Neill <faokryn@gmail.com> github.com/Faokryn
+
+	comments.php -	Receives form data from comments.js and stores it in 
+					comments.db, retreives data from comments.db, formats it as 
+					HTML, and returns it to comments.js
+
+	This software is released under the GNU GENERAL PUBLIC LICENSE Version 2
+	https://github.com/Faokryn/SimpleComments/blob/master/LICENSE
+*/
 
 	/*
 	Checks if the directory in which comments.php is located is writable by
@@ -6,11 +19,6 @@
 	database file called "comments.db".  If that database file does not exist,
 	it is created.  If the directory is not writable, an error is printed to
 	the screen.  For now.
-
-	TOD0:
-		- Determine a more effective way to present the error message
-		- Make the error message more descriptive (i.e. explain how to resolve
-		  the error.  Focus is on accessability after all.)
 	*/
 	function initDB() {
 		if (is_writable('.')) {
@@ -23,10 +31,8 @@
 	}
 
 	/*
-	Creates a table with appropriate columns to represent comments with the
-	given name in the database, if one does not exist already.
-
-	TOD0:
+	Creates a table with appropriate columns to represent comments, using the
+	given name, in the database (if one does not exist already).
 	*/
 	function initTable($name) {
 		$db = initDB();
@@ -39,8 +45,6 @@
 
 	/*
 	Checks the validity of a comment and adds valid comments to the database.
-
-	TOD0:
 	*/
 	function addComment($hidemail) {
 
@@ -131,20 +135,21 @@
 	/*
 	Finds the appropriate table in the database and writes a comment to the
 	page for each row
-
-	TODO:
-		- Everything; this is a stub
 	*/
 	function displayComments() {
+		// The table name is the md5 hash of the current URL.
 		$tableName = md5($_POST["url"]);
 		initTable($tableName);
 
 		$db = initDB();
 
+		// Get everything from the table for the current page
 		$query = "SELECT * FROM '" . $tableName . "'";
 		$result = $db->query($query);
 
+		// Get the array representing the next row while it is not false
 		while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+			// Build the HTML for a single comment div
 			$output = "<hr class='sc_line'><div class='sc_comment'>"
 
 			. "<img src='http://cdn.libravatar.org/avatar/" . md5($row["email"])
@@ -154,6 +159,8 @@
 			. "<div class='sc_comment_body'>" . "<h6 class='sc_date'>" . 
 			$row["date"] . "</h6>";
 
+			// Make the name a "mailto" link to the given email, if the email
+			// was not selected to be hidden
 			if ($row["hide"] == 0) {
 				$output = $output . "<a class='sc_email_link' href='mailto:" . 
 				$row["email"] . "'><h4 class='sc_name'>". $row["name"] . 
@@ -167,6 +174,7 @@
 			$output = $output . "<p class='sc_comment_message'>" . 
 			$row["message"] . "</p></div></div>";
 
+			// echo the HTML so it can be picked up be the HTTP request
 			echo $output;
 		}
 	}
@@ -175,17 +183,16 @@
 	/*
 	Runs when the PHP file is called.  Determines how to handle the POST request
 	and executes the proper functions.
-
-	TODO:
-		- Handle display comments request
-		- Better handling for file called with no POST
 	*/
 	function handleRequest() {
+		// If the request has these data, it is a comment submission
 		if (array_key_exists("name", $_POST)	&&
 			array_key_exists("email", $_POST)	&&
 			array_key_exists("message", $_POST)	&&
 			array_key_exists("url", $_POST)		){
 
+			// Check whether or not email is hidden, and execute addComment
+			// as appropriate
 			if (array_key_exists("hidemail", $_POST)) {
 				// add comment and hide email
 				addComment(true);
@@ -195,9 +202,14 @@
 				addComment(false);
 			}
 		} 
+		// If the request has displayCall, it is a request for the comments
+		// stored in the database
 		elseif (array_key_exists("displayCall", $_POST)) {
+			// build and respond with HTML for the comments
 			displayComments();
 		}
+		// If an HTTP request was received, but it was not a form submission or
+		// a request for database data, then something went wrong.
 		else {
 			echo "<h1>Something went wrong!</h1>";
 		}

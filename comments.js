@@ -1,9 +1,23 @@
+/*
+	SIMPLE COMMENTS
+	A commenting system designed to be fast and easy to implement.
+
+	Created by Colin O'Neill <faokryn@gmail.com> github.com/Faokryn
+
+	comments.js -	Sends form data to comments.php, receives data from 
+					comments.php, and populates the Simple Comments div
+
+	This software is released under the GNU GENERAL PUBLIC LICENSE Version 2
+	https://github.com/Faokryn/SimpleComments/blob/master/LICENSE
+*/
+
 // To completely remove the standard CSS, comment or delete the line below
 basicStyle();
 
 // Gets the path to the directory in which the Javascript file is located
 $path = document.getElementById("sc_script").getAttribute("src").slice(0, -11);
 
+// Builds the HTML for the comments.  
 function display() {
 
 	// Get the sc_main div, and store it as parent
@@ -61,14 +75,17 @@ function display() {
 		var commentsDiv = document.createElement("div");
 		commentsDiv.setAttribute("id", "sc_comments");
 
+		// Create a packet of data to send to comments.php
 		var payload = new FormData();
 		payload.append("displayCall", true);
 		payload.append("url", document.URL);
 
+		// Send an HTTP request to comments.php and listen for a response
 		var request = new XMLHttpRequest();
 		request.open("POST", $path+"comments.php", true);
 		request.send(payload);
 		request.onload = function(e) {
+			// When a response is received, append it to the comments div
 			commentsDiv.innerHTML += request.responseText;
 		}
 
@@ -76,6 +93,9 @@ function display() {
 	parent.appendChild(commentsDiv);
 }
 
+// A very simple CSS style to make the comments more appealing.
+// Adds the style tag before the first child of head, so any style tags or
+// external style sheets in head will overwrite this style
 function basicStyle() {
 	var style = document.createElement("style");
 	style.innerHTML = ".sc_comment{position:relative;} .sc_comment_body{" +
@@ -85,21 +105,29 @@ function basicStyle() {
 	document.head.insertBefore(style, document.head.firstChild);
 }
 
+// Sends form data to comments.php
 function submitComment(form) {
+
+	// Collect form data to send to comments.php
 	var payload = new FormData(form);
 	payload.append("url", document.URL);
 
+	// Send an HTTP request to comments.php and listen for a response
 	var request = new XMLHttpRequest();
 	request.open("POST", $path+"comments.php", true);
 	request.send(payload);
 	request.onload = function(e) {
-		console.log(request.responseText);
+		// When a response is received, parse it as JSON and store it
 		var response = JSON.parse(request.responseText);
 
 		if (response.valid) {
+			// If the "valid" status of the request is true, the submission was
+			// successful.  Replace the form with the message.
 			document.getElementById("sc_comment_form").innerHTML = response.msg;
 		}
 		else {
+			// If the "valid" status of the request is false, an error occured.
+			// Create an alert with the message (it is an error message)
 			window.alert(response.msg);
 		}
 	}
